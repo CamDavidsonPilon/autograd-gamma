@@ -1,10 +1,9 @@
 import pytest
 from autograd import grad, jacobian
-from autograd.scipy.special import gammainc as scipy_gammainc, gammaincc as scipy_gammaincc
+from autograd.scipy.special import gammainc as scipy_gammainc, gammaincc as scipy_gammaincc, gamma
 from autograd_gamma import gammainc, gammaincc
 import numpy as np
 import numpy.testing as npt
-from autograd.scipy.special import polygamma, gamma
 from scipy.special import expi
 
 
