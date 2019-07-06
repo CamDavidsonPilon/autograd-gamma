@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
+import setuptools
 
-setup(name='autograd-gamma',
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
+setuptools.setup(name='autograd-gamma',
       version='0.1',
       description='Autograd compatible approximations to the gamma family of functions',
       author='Cameron Davidson-Pilon',
@@ -10,6 +13,8 @@ setup(name='autograd-gamma',
       url='https://github.com/CamDavidsonPilon/autograd-gamma',
       packages=['autograd_gamma'],
       keywords=['autograd', 'gamma', 'incomplete gamma function'],
+      long_description=long_description,
+      long_description_content_type="text/markdown",
       classifiers=[
         'Intended Audience :: Science/Research',
         'Topic :: Scientific/Engineering',
@@ -19,5 +24,6 @@ setup(name='autograd-gamma',
       install_requires=[
        'autograd>=1.2.0',
        'scipy>=1.2.0',
-     ]
+     ],
+     packages=setuptools.find_packages(),
  )
