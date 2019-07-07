@@ -8,19 +8,17 @@ __all__ = [
     'gammainc', # regularized lower incomplete gamma function
     'gammaincc', # regularized upper incomplete gamma function
     'gamma', # gamma function
-    'reg_lower_inc_gamma',
-    'reg_upper_inc_gamma'
+    'reg_lower_inc_gamma', # alias
+    'reg_upper_inc_gamma'  # alias
 ]
 
 
-
-DELTA = 1e-7
 
 gammainc = primitive(_scipy_gammainc)
 gammaincc = primitive(_scipy_gammaincc)
 
 
-def central_difference(f):
+def central_difference_of_(f):
     def _central_difference(ans, a, x):
         return unbroadcast_f(
             a,
@@ -36,16 +34,17 @@ def central_difference(f):
     return _central_difference
 
 
+
 defvjp(
     gammainc,
-    central_difference(gammainc),
+    central_difference_of_(gammainc),
     lambda ans, a, x: unbroadcast_f(x, lambda g: g * np.exp(-x + np.log(x)*(a - 1) - gammaln(a)))
 )
 
 
 defvjp(
     gammaincc,
-    central_difference(gammaincc),
+    central_difference_of_(gammaincc),
     lambda ans, a, x: unbroadcast_f(x, lambda g: -g * np.exp(-x + np.log(x)*(a - 1) - gammaln(a)))
 )
 
