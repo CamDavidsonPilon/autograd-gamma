@@ -13,43 +13,39 @@ __all__ = [
 ]
 
 
-DELTA = 1e-7
 
+DELTA = 1e-7
 
 gammainc = primitive(_scipy_gammainc)
 gammaincc = primitive(_scipy_gammaincc)
 
 
+def central_difference(f):
+    def _central_difference(ans, a, x):
+        return unbroadcast_f(
+            a,
+            lambda g: g
+            * (
+                -f(a + 2 * DELTA, x)
+                + 8 * f(a + DELTA, x)
+                - 8 * f(a - DELTA, x)
+                + f(a - 2 * DELTA, x)
+            )
+            / (12 * DELTA),
+        )
+    return _central_difference
+
+
 defvjp(
     gammainc,
-    lambda ans, a, x: unbroadcast_f(
-        a,
-        lambda g: g
-        * (
-            -gammainc(a + 2 * DELTA, x)
-            + 8 * gammainc(a + DELTA, x)
-            - 8 * gammainc(a - DELTA, x)
-            + gammainc(a - 2 * DELTA, x)
-        )
-        / (12 * DELTA),
-    ),
+    central_difference(gammainc),
     lambda ans, a, x: unbroadcast_f(x, lambda g: g * np.exp(-x + np.log(x)*(a - 1) - gammaln(a)))
 )
 
 
 defvjp(
     gammaincc,
-    lambda ans, a, x: unbroadcast_f(
-        a,
-        lambda g: g
-        * (
-            -gammaincc(a + 2 * DELTA, x)
-            + 8 * gammaincc(a + DELTA, x)
-            - 8 * gammaincc(a - DELTA, x)
-            + gammaincc(a - 2 * DELTA, x)
-        )
-        / (12 * DELTA),
-    ),
+    central_difference(gammaincc),
     lambda ans, a, x: unbroadcast_f(x, lambda g: -g * np.exp(-x + np.log(x)*(a - 1) - gammaln(a)))
 )
 

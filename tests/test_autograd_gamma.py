@@ -38,7 +38,7 @@ def test_a_special_case_of_the_derivative():
     x = np.linspace(1, 12)
     npt.assert_allclose(analytical_derivative(x), approx_derivative(x))
 
-    x = np.logspace(-5, 2)
+    x = np.logspace(-25, 25, 100)
     npt.assert_allclose(analytical_derivative(x), approx_derivative(x))
 
 
