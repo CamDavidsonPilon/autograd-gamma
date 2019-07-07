@@ -42,3 +42,6 @@ def test_a_special_case_of_the_derivative():
     npt.assert_allclose(analytical_derivative(x), approx_derivative(x))
 
 
+def test_large_x():
+    npt.assert_allclose(grad(gammainc, argnum=1)(100., 10000.), 0)
+    npt.assert_allclose(grad(gammaincc, argnum=1)(100., 10000.), 0)
