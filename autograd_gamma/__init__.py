@@ -1,6 +1,6 @@
 from autograd.extend import primitive, defvjp
 from autograd import numpy as np
-from autograd.scipy.special import gamma
+from autograd.scipy.special import gammaln
 from autograd.numpy.numpy_vjps import unbroadcast_f
 from scipy.special import gammainc as _scipy_gammainc, gammaincc as _scipy_gammaincc
 
@@ -33,7 +33,7 @@ defvjp(
         )
         / (12 * DELTA),
     ),
-    lambda ans, a, x: unbroadcast_f(x, lambda g: g * np.exp(-x) * np.power(x, a - 1) / gamma(a)),
+    lambda ans, a, x: unbroadcast_f(x, lambda g: g * np.exp(-x + np.log(x)*(a - 1) - gammaln(a)))
 )
 
 
@@ -50,7 +50,7 @@ defvjp(
         )
         / (12 * DELTA),
     ),
-    lambda ans, a, x: unbroadcast_f(x, lambda g: -g * np.exp(-x) * np.power(x, a - 1) / gamma(a)),
+    lambda ans, a, x: unbroadcast_f(x, lambda g: -g * np.exp(-x + np.log(x)*(a - 1) - gammaln(a)))
 )
 
 
