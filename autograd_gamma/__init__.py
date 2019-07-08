@@ -13,6 +13,7 @@ __all__ = [
 ]
 
 
+DELTA = 1e-7
 
 gammainc = primitive(_scipy_gammainc)
 gammaincc = primitive(_scipy_gammaincc)
