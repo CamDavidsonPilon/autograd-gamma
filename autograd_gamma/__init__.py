@@ -41,7 +41,7 @@ def central_difference_of_(f):
         # another thing to consider (and later to add) is that x is machine representable, but x + h is
         # rarely, and will be rounded to be machine representable. This (x + h) - x != h.
 
-        delta = np.maximum(a * MACHINE_EPISLON_POWER, 1e-8)
+        delta = np.maximum(a * MACHINE_EPISLON_POWER, 1e-7)
         return unbroadcast_f(
             a,
             lambda g: g
