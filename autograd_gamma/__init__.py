@@ -38,6 +38,11 @@ def gammainccln(a, x):
 def gammaincln(a, x):
     return np.log(np.clip(gammainc(a, x), LOG_EPISILON, 1 - LOG_EPISILON))
 
+@primitive
+def betaincln(a, b, x):
+    return np.log(np.clip(betainc(a, b, x), LOG_EPISILON, 1 - LOG_EPISILON))
+
+
 
 def central_difference_of_(f, argnum=0):
     new_f = lambda x, *args: f(*args[:argnum], x, *args[argnum:])
@@ -99,3 +104,10 @@ defvjp(
 )
 
 
+
+defvjp(
+    betaincln,
+    central_difference_of_(betaincln, argnum=0),
+    central_difference_of_(betaincln, argnum=1),
+    lambda ans, a, b, x: unbroadcast_f(x, lambda g: g * np.power(x, a - 1) * np.power(1 - x, b - 1) / beta(a, b)/betainc(a, b, x)),
+)
