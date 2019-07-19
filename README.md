@@ -9,7 +9,7 @@ autograd compatible approximations to the derivatives of the Gamma-family of fun
 
 ```python
 from autograd import grad
-from autograd_gamma import gammainc, gammaincc, gamma, gammaincln, gammainccln
+from autograd_gamma import gammainc, gammaincc, gammaincln, gammainccln
 
 
 grad(gammainc, argnum=0)(1., 2.)
@@ -21,7 +21,6 @@ grad(gammainccln, argnum=0)(1., 2.)
 
 
 
-from autograd import grad
 from autograd_gamma import betainc, betaincln
 
 grad(betainc, argnum=0)(1., 2., 0.5)
