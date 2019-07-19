@@ -8,7 +8,7 @@ from scipy.special import (
     gammaincc as _scipy_gammaincc,
     gamma,
     betainc as _scipy_betainc,
-    beta
+    beta,
 )
 
 __all__ = [
@@ -38,10 +38,10 @@ def gammainccln(a, x):
 def gammaincln(a, x):
     return np.log(np.clip(gammainc(a, x), LOG_EPISILON, 1 - LOG_EPISILON))
 
+
 @primitive
 def betaincln(a, b, x):
     return np.log(np.clip(betainc(a, b, x), LOG_EPISILON, 1 - LOG_EPISILON))
-
 
 
 def central_difference_of_(f, argnum=0):
@@ -49,7 +49,7 @@ def central_difference_of_(f, argnum=0):
 
     def _central_difference(_, *args):
         x = args[argnum]
-        args = args[:argnum] + args[argnum+1:]
+        args = args[:argnum] + args[argnum + 1 :]
 
         # Why do we calculate a * MACHINE_EPSILON_POWER?
         # consider if x is massive, like, 2**100. Then even for a simple
@@ -62,7 +62,12 @@ def central_difference_of_(f, argnum=0):
         return unbroadcast_f(
             x,
             lambda g: g
-            * (-new_f(x + 2 * delta, *args) + 8 * new_f(x + delta, *args) - 8 * new_f(x - delta, *args) + new_f(x - 2 * delta, *args))
+            * (
+                -new_f(x + 2 * delta, *args)
+                + 8 * new_f(x + delta, *args)
+                - 8 * new_f(x - delta, *args)
+                + new_f(x - 2 * delta, *args)
+            )
             / (12 * delta),
         )
 
@@ -72,27 +77,36 @@ def central_difference_of_(f, argnum=0):
 defvjp(
     gammainc,
     central_difference_of_(gammainc),
-    lambda ans, a, x: unbroadcast_f(x, lambda g: g * np.exp(-x + np.log(x) * (a - 1) - gammaln(a))),
+    lambda ans, a, x: unbroadcast_f(
+        x, lambda g: g * np.exp(-x + np.log(x) * (a - 1) - gammaln(a))
+    ),
 )
 
 defvjp(
     gammaincc,
     central_difference_of_(gammaincc),
-    lambda ans, a, x: unbroadcast_f(x, lambda g: -g * np.exp(-x + np.log(x) * (a - 1) - gammaln(a))),
+    lambda ans, a, x: unbroadcast_f(
+        x, lambda g: -g * np.exp(-x + np.log(x) * (a - 1) - gammaln(a))
+    ),
 )
 
 defvjp(
     gammainccln,
     central_difference_of_(gammainccln),
     lambda ans, a, x: unbroadcast_f(
-        x, lambda g: -g * np.exp(-x + np.log(x) * (a - 1) - gammaln(a) - gammainccln(a, x))
+        x,
+        lambda g: -g
+        * np.exp(-x + np.log(x) * (a - 1) - gammaln(a) - gammainccln(a, x)),
     ),
 )
 
 defvjp(
     gammaincln,
     central_difference_of_(gammaincln),
-    lambda ans, a, x: unbroadcast_f(x, lambda g: g * np.exp(-x + np.log(x) * (a - 1) - gammaln(a) - gammaincln(a, x))),
+    lambda ans, a, x: unbroadcast_f(
+        x,
+        lambda g: g * np.exp(-x + np.log(x) * (a - 1) - gammaln(a) - gammaincln(a, x)),
+    ),
 )
 
 
@@ -100,14 +114,22 @@ defvjp(
     betainc,
     central_difference_of_(betainc, argnum=0),
     central_difference_of_(betainc, argnum=1),
-    lambda ans, a, b, x: unbroadcast_f(x, lambda g: g * np.power(x, a - 1) * np.power(1 - x, b - 1) / beta(a, b)),
+    lambda ans, a, b, x: unbroadcast_f(
+        x, lambda g: g * np.power(x, a - 1) * np.power(1 - x, b - 1) / beta(a, b)
+    ),
 )
-
 
 
 defvjp(
     betaincln,
     central_difference_of_(betaincln, argnum=0),
     central_difference_of_(betaincln, argnum=1),
-    lambda ans, a, b, x: unbroadcast_f(x, lambda g: g * np.power(x, a - 1) * np.power(1 - x, b - 1) / beta(a, b)/betainc(a, b, x)),
+    lambda ans, a, b, x: unbroadcast_f(
+        x,
+        lambda g: g
+        * np.power(x, a - 1)
+        * np.power(1 - x, b - 1)
+        / beta(a, b)
+        / betainc(a, b, x),
+    ),
 )
