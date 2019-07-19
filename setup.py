@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="autograd-gamma",
-    version="0.4.0",
+    version="0.4.1",
     description="Autograd compatible approximations to the gamma family of functions",
     author="Cameron Davidson-Pilon",
     author_email="cam.davidson.pilon@gmail.com",

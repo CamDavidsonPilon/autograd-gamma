@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 from autograd.extend import primitive, defvjp
 from autograd import numpy as np
-from autograd.scipy.special import gammaln
+from autograd.scipy.special import gammaln, beta
 from autograd.numpy.numpy_vjps import unbroadcast_f
 from scipy.special import (
     gammainc as _scipy_gammainc,
     gammaincc as _scipy_gammaincc,
     gamma,
     betainc as _scipy_betainc,
-    beta,
 )
 
 __all__ = [
