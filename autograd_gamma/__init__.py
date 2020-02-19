@@ -11,19 +11,19 @@ from scipy.special import (
 )
 
 __all__ = [
-    "gamma",        # gamma function
-    "gammainc",     # regularized lower incomplete gamma function
-    "gammaincln",   # log of regularized lower incomplete gamma function
-    "gammaincc",    # regularized upper incomplete gamma function
+    "gamma",  # gamma function
+    "gammainc",  # regularized lower incomplete gamma function
+    "gammaincln",  # log of regularized lower incomplete gamma function
+    "gammaincc",  # regularized upper incomplete gamma function
     "gammainccln",  # log of regularized upper incomplete gamma function
-    "beta",         # beta function
-    "betainc",      # incomplete beta function
-    "betaincln",    # log of incomplete beta function
+    "beta",  # beta function
+    "betainc",  # incomplete beta function
+    "betaincln",  # log of incomplete beta function
 ]
 
 
 LOG_EPISILON = 1e-35
-MACHINE_EPISLON_POWER = np.finfo(float).eps ** (1/3)
+MACHINE_EPISLON_POWER = np.finfo(float).eps ** (1 / 3)
 
 gammainc = primitive(_scipy_gammainc)
 gammaincc = primitive(_scipy_gammaincc)
@@ -69,7 +69,7 @@ def central_difference_of_(f, argnum=0):
             x,
             lambda g: g
             * (
-                - 1 * new_f(x + 2 * delta, *args)
+                -1 * new_f(x + 2 * delta, *args)
                 + 8 * new_f(x + delta, *args)
                 - 8 * new_f(x - delta, *args)
                 + 1 * new_f(x - 2 * delta, *args)
@@ -106,20 +106,20 @@ def central_difference_of_log(f, argnum=0):
         delta = temp - x
 
         def _to_return(g):
-            v = (g
-            * (
-                - 1 * new_f(x + 2 * delta, *args)
-                + 8 * new_f(x + 1 * delta, *args)
-                - 8 * new_f(x - 1 * delta, *args)
-                + 1 * new_f(x - 2 * delta, *args)
+            v = (
+                g
+                * (
+                    -1 * new_f(x + 2 * delta, *args)
+                    + 8 * new_f(x + 1 * delta, *args)
+                    - 8 * new_f(x - 1 * delta, *args)
+                    + 1 * new_f(x - 2 * delta, *args)
+                )
+                / (12 * delta)
+                / new_f(x, *args)
             )
-            / (12 * delta) / new_f(x, *args))
             return np.clip(v, -1e20, 1e20)
 
-        return unbroadcast_f(
-            x,
-            _to_return,
-        )
+        return unbroadcast_f(x, _to_return,)
 
     return _central_difference
 
