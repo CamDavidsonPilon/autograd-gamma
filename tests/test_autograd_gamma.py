@@ -5,7 +5,7 @@ from autograd.scipy.special import (
     gammaincc as scipy_gammaincc,
     gamma,
 )
-from autograd_gamma import gammainc, gammaincc, betainc
+from autograd_gamma import gammainc, gammaincc, betainc, gammaincln
 import numpy as np
 import numpy.testing as npt
 from scipy.special import expi
@@ -20,6 +20,11 @@ def test_inc_gamma_second_argument():
             npt.assert_allclose(
                 grad(gammaincc, argnum=1)(a, x), grad(scipy_gammaincc, argnum=1)(a, x)
             )
+
+def test_log_gamma():
+    gammaincln(1., 1.)
+    grad(gammaincln)(1., 1.)
+    grad(gammaincln, argnum=1)(1., 1.)
 
 
 def test_a_special_case_of_the_derivative():

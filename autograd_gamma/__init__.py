@@ -106,20 +106,21 @@ def central_difference_of_log(f, argnum=0):
         delta = temp - x
 
         def _to_return(g):
-            v = (
-                g
-                * (
-                    -1 * new_f(x + 2 * delta, *args)
-                    + 8 * new_f(x + 1 * delta, *args)
-                    - 8 * new_f(x - 1 * delta, *args)
-                    + 1 * new_f(x - 2 * delta, *args)
-                )
-                / (12 * delta)
-                / new_f(x, *args)
-            )
+            v = ()
             return np.clip(v, -1e20, 1e20)
 
-        return unbroadcast_f(x, _to_return,)
+        return unbroadcast_f(
+            x,
+            lambda g: g
+            * (
+                -1 * new_f(x + 2 * delta, *args)
+                + 8 * new_f(x + 1 * delta, *args)
+                - 8 * new_f(x - 1 * delta, *args)
+                + 1 * new_f(x - 2 * delta, *args)
+            )
+            / (12 * delta)
+            / new_f(x, *args),
+        )
 
     return _central_difference
 
