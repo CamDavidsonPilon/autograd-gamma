@@ -104,11 +104,6 @@ def central_difference_of_log(f, argnum=0):
         # rarely, and will be rounded to be machine representable. This (x + h) - x != h.
         temp = x + delta
         delta = temp - x
-
-        def _to_return(g):
-            v = ()
-            return np.clip(v, -1e20, 1e20)
-
         return unbroadcast_f(
             x,
             lambda g: g
