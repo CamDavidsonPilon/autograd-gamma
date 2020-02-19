@@ -82,7 +82,11 @@ def central_difference_of_(f, argnum=0):
 
 def central_difference_of_log(f, argnum=0):
     """
-    5th order approximation of derivative of log(f)
+    5th order approximation of derivative of log(f). We take advantage of the fact:
+
+    d(log(f))/dx = 1/f df/dx
+
+    So we approximate the second term only.
     """
     new_f = lambda x, *args: f(*args[:argnum], x, *args[argnum:])
 
