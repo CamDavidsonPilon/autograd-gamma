@@ -2,7 +2,7 @@
 [![PyPI version](https://badge.fury.io/py/autograd-gamma.svg)](https://badge.fury.io/py/autograd-gamma)
 
 
-autograd compatible approximations to the derivatives of the Gamma-family of functions.
+[autograd](https://github.com/HIPS/autograd) compatible approximations to the derivatives of the Gamma-family of functions.
 
 
 # Tutorial
