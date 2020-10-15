@@ -8,6 +8,9 @@ from scipy.special import (
     gammaincc as _scipy_gammaincc,
     gamma,
     betainc as _scipy_betainc,
+    gammainccinv as _scipy_gammainccinv,
+    gammaincinv as _scipy_gammaincinv,
+    betaincinv as _scipy_betaincinv,
 )
 
 __all__ = [
@@ -19,6 +22,9 @@ __all__ = [
     "beta",  # beta function
     "betainc",  # incomplete beta function
     "betaincln",  # log of incomplete beta function
+    'gammaincinv', # inverse of the gammainc w.r.t. the second argument, solves y = P(a, x)
+    'gammainccinv', # inverse of the gammaincc w.r.t. the second argument, solves y = Q(a, x)
+    'betaincinv', # inverse of the betainc, solves y = B(a, b, x)
 ]
 
 
@@ -28,6 +34,9 @@ MACHINE_EPISLON_POWER = np.finfo(float).eps ** (1 / 3)
 gammainc = primitive(_scipy_gammainc)
 gammaincc = primitive(_scipy_gammaincc)
 betainc = primitive(_scipy_betainc)
+gammainccinv = primitive(_scipy_gammainccinv)
+gammaincinv = primitive(_scipy_gammaincinv)
+betaincinv = primitive(_scipy_betaincinv)
 
 
 @primitive
@@ -136,6 +145,23 @@ defvjp(
     ),
 )
 
+
+defvjp(
+    gammaincinv,
+    central_difference_of_(gammaincinv),
+    lambda ans, a, y: unbroadcast_f(
+        y, lambda g: g * np.exp(gammaincinv(a, y) - np.log(gammaincinv(a, y)) * (a - 1) + gammaln(a))
+    ),
+)
+
+defvjp(
+    gammainccinv,
+    central_difference_of_(gammainccinv),
+    lambda ans, a, y: unbroadcast_f(
+        y, lambda g: -g * np.exp(gammainccinv(a, y) - np.log(gammainccinv(a, y)) * (a - 1) + gammaln(a))
+    ),
+)
+
 defvjp(
     gammainccln,
     central_difference_of_log(gammaincc),
@@ -162,6 +188,15 @@ defvjp(
     central_difference_of_(betainc, argnum=1),
     lambda ans, a, b, x: unbroadcast_f(
         x, lambda g: g * np.power(x, a - 1) * np.power(1 - x, b - 1) / beta(a, b)
+    ),
+)
+
+defvjp(
+    betaincinv,
+    central_difference_of_(betaincinv, argnum=0),
+    central_difference_of_(betaincinv, argnum=1),
+    lambda ans, a, b, y: unbroadcast_f(
+        y, lambda g: g * 1/(np.power(betaincinv(a,b,y), a - 1) * np.power(1 - betaincinv(a,b,y), b - 1) / beta(a, b))
     ),
 )
 

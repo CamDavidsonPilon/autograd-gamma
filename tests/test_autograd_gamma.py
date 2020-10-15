@@ -5,10 +5,11 @@ from autograd.scipy.special import (
     gammaincc as scipy_gammaincc,
     gamma,
 )
-from autograd_gamma import gammainc, gammaincc, betainc, gammaincln
+from autograd_gamma import gammainc, gammaincc, betainc, gammaincln, gammaincinv, gammainccinv, betaincinv
 import numpy as np
 import numpy.testing as npt
 from scipy.special import expi
+from scipy.optimize import check_grad
 
 
 def test_inc_gamma_second_argument():
@@ -87,3 +88,51 @@ def test_betainc_to_known_values():
     npt.assert_allclose(
         d_beta_inc_1(1.0, b, x), jacobian(lambda b, x: 1 - (1 - x) ** b)(b, x)
     )
+
+
+
+def test_gammainc():
+
+    for a in np.logspace(-0.1, 2, 10):
+        gammainc_1 = lambda x: gammainc(a, x)
+        gammainc_2 = lambda x: grad(gammainc, argnum=1)(a, x)
+
+        assert check_grad(gammainc_1, gammainc_2, 1e-4) < 0.0001
+        assert check_grad(gammainc_1, gammainc_2, 1e-3) < 0.0001
+        assert check_grad(gammainc_1, gammainc_2, 1e-2) < 0.0001
+        assert check_grad(gammainc_1, gammainc_2, 1e-1) < 0.0001
+        assert check_grad(gammainc_1, gammainc_2, 1e-0) < 0.0001
+        assert check_grad(gammainc_1, gammainc_2, 1e1) < 0.0001
+        assert check_grad(gammainc_1, gammainc_2, 1e2) < 0.0001
+
+def test_gammaincinv():
+    for a in np.logspace(-1, 1, 10):
+        for y in np.linspace(0.001, 0.99, 10):
+            gammaincinv_1 = lambda x: gammaincinv(a, x)
+            gammaincinv_2 = lambda x: grad(gammaincinv, argnum=1)(a, x)
+            assert check_grad(gammaincinv_1, gammaincinv_2, y) < 0.01, (a, y)
+
+def test_gammainccinv():
+    for a in np.logspace(-1, 1, 10):
+        for y in np.linspace(0.01, 0.99, 10):
+            gammainccinv_1 = lambda x: gammainccinv(a, x)
+            gammainccinv_2 = lambda x: grad(gammainccinv, argnum=1)(a, x)
+            assert check_grad(gammainccinv_1, gammainccinv_2, y) < 0.0005, (a, y)
+
+def test_betaincinv():
+    for a in np.logspace(-1, 2, 10):
+        for b in np.logspace(-1, 2, 10):
+            for y in np.linspace(0.01, 0.99, 10):
+                betaincinv_1 = lambda x: betaincinv(a, b, x)
+                betaincinv_2 = lambda x: grad(betaincinv, argnum=2)(a, b, x)
+                assert check_grad(betaincinv_1, betaincinv_2, y) < 0.0005, (a, b, y)
+
+
+
+@pytest.mark.xfail
+def test_gammainc_fails():
+    a = 0.1
+    gammainc_1 = lambda x: gammainc(a, x)
+    gammainc_2 = lambda x: grad(gammainc, argnum=1)(a, x)
+    assert not check_grad(gammainc_1, gammainc_2, 1e-4) < 0.0001
+
